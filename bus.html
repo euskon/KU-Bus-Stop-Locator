@@ -51,12 +51,13 @@
                     stops: []
                 },
                 mounted: function () {
-                    fetch('https://utils.pauliankline.com/stops.json')
+                    this.stops = fetch('https://utils.pauliankline.com/stops.json')
                         .then(function(response){
                             return response.json();
                         })
                         .then(function(myJson){
-                            stops = myJson;
+                            this.stops = myJson;
+                            return myJson;
                         });
                 }
             })
