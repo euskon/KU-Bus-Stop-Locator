@@ -26,8 +26,8 @@
             </div>
             <div class="list">
                 <ul>
-                    <li v-for="task in todos">
-                        {{ task }}
+                    <li v-for="singleStop in stops" :key="singleStop.id">
+                        {{ singleStop }}
                     </li>
                 </ul>
             </div>            
@@ -48,7 +48,16 @@
                 el: '#app',
                 data: {
                     message: 'Hello World from Zach Using Vue.js!',
-                    todos: ["Enroll", "Labs", "Work"]
+                    stops: []
+                },
+                mounted: function () {
+                    fetch('https://utils.pauliankline.com/stops.json')
+                        .then(function(response){
+                            return response.json();
+                        })
+                        .then(function(myJson){
+                            stops = myJson;
+                        });
                 }
             })
         </script>
