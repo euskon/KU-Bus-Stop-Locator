@@ -20,7 +20,8 @@
                     <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
             </div>
             <div>
-                    <input v-model.number="numStops" type="number">
+                Number of Stops to display: <br>
+                <input v-model.number="numStops" type="number">
             </div>
             <div class="list">
                 <ul>
@@ -28,7 +29,7 @@
                         <!-- {{ singleStop }} -->
                         <div class="card" style="width: 18rem;">
                                 <div class="card-body">
-                                  <h5 class="card-title">{{ singleStop.name }} {{ singleStop.id }}</h5>
+                                  <h5 class="card-title">{{ singleStop.name }}</h5>
                                   <p class="card-text">{{ singleStop.description }}</p>
                                   
                                 </div>
