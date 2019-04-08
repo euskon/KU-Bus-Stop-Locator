@@ -12,15 +12,8 @@
     </head>
     <body>
         <div class="container" id="app">
-            <div class="jumbotron">
-                    <h1 class="display-4">{{ message }}</h1>
-                    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-                    <hr class="my-4">
-                    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </div>
             <div>
-                Number of Stops to display: <br>
+                Number of Stops to display:<br>(closest -> furthest) <br>
                 <input v-model.number="numStops" type="number">
             </div>
             <div class="list">
@@ -32,7 +25,7 @@
                                   <h5 class="card-title">{{ singleStop.name }}</h5>
                                   <p class="card-text">
                                       {{ singleStop.description }}<br>
-                                      Distance: {{ singleStop.distance }}
+                                      Distance(mi): {{ singleStop.distance }}
                                     </p>
                                   
                                 </div>
@@ -67,13 +60,18 @@
                 mounted: function () {
                     fetch('https://utils.pauliankline.com/stops.json')
                         .then(response => response.json())
-                        .then(myJson => this.stops = myJson);                    
+                        .then(myJson => this.stops = myJson);
+                                             
                 },
                 created: function () {
-                    navigator.geolocation.getCurrentPosition(this.setUserLoc)
+                    navigator.geolocation.getCurrentPosition(this.setUserLoc);
+                    navigator.geolocation.watchPosition(this.setUserLoc);
+                    // this.stops.forEach(this.updateDist);   
                 },
                 computed: {
                     filteredStops: function () {
+                        this.stops.forEach(this.updateDist); 
+                        this.stops.sort((a, b) => (a.distance > b.distance) ? 1 : -1);
                         let groupOfStops = [];
                         for(let i=0; i < this.numStops; i++) {
                             groupOfStops.push(this.stops[i]);
@@ -83,16 +81,26 @@
                 },
                 watch: {
                     userLoc: function () {
-                        navigator.geolocation.watchPosition(this.setUserLoc);
+                        this.stops.forEach(this.updateDist);
                     }
                 },
                 methods: {
                     setUserLoc: function (locObj) {
                         this.userLoc.long = locObj.coords.longitude;
                         this.userLoc.lat = locObj.coords.latitude;
+                    },
+                    // calcDist: function (stopLat, stopLong) {
+                    //     return Math.sqrt(((stopLat - this.userLoc.lat) ** 2) + ((stopLong - this.userloc.long) ** 2));
+                    // },
+                    updateDist: function (stop) {
+                        stop.distance = calcDist(stop.lat, stop.lon);
                     }
+
                 }
-            })
+            });
+            function calcDist(stopLat, stopLong) {
+                return Math.sqrt(((stopLat - app.userLoc.lat) ** 2) + ((stopLong - app.userLoc.long) ** 2) * 69);
+            }
         </script>
     </body>
 </html>
