@@ -19,15 +19,20 @@
                     <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
                     <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
             </div>
-            <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-secondary">Left</button>
-                    <button type="button" class="btn btn-secondary">Middle</button>
-                    <button type="button" class="btn btn-secondary">Right</button>
+            <div>
+                    <input v-model.number="numStops" type="number">
             </div>
             <div class="list">
                 <ul>
-                    <li v-for="singleStop in stops" :key="singleStop.id">
-                        {{ singleStop }}
+                    <li v-for="singleStop in filteredStops" :key="singleStop.id">
+                        <!-- {{ singleStop }} -->
+                        <div class="card" style="width: 18rem;">
+                                <div class="card-body">
+                                  <h5 class="card-title">{{ singleStop.name }} {{ singleStop.id }}</h5>
+                                  <p class="card-text">{{ singleStop.description }}</p>
+                                  
+                                </div>
+                        </div>
                     </li>
                 </ul>
             </div>            
@@ -48,17 +53,22 @@
                 el: '#app',
                 data: {
                     message: 'Hello World from Zach Using Vue.js!',
-                    stops: []
+                    stops: [],
+                    numStops: 10 
                 },
                 mounted: function () {
-                    this.stops = fetch('https://utils.pauliankline.com/stops.json')
-                        .then(function(response){
-                            return response.json();
-                        })
-                        .then(function(myJson){
-                            this.stops = myJson;
-                            return myJson;
-                        });
+                    fetch('https://utils.pauliankline.com/stops.json')
+                        .then(response => response.json())
+                        .then(myJson => this.stops = myJson);
+                },
+                computed: {
+                    filteredStops: function () {
+                        let groupOfStops = [];
+                        for(let i=0; i < this.numStops; i++) {
+                            groupOfStops.push(this.stops[i]);
+                        }
+                        return groupOfStops;
+                    }
                 }
             })
         </script>
