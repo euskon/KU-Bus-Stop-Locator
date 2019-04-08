@@ -30,7 +30,10 @@
                         <div class="card" style="width: 18rem;">
                                 <div class="card-body">
                                   <h5 class="card-title">{{ singleStop.name }}</h5>
-                                  <p class="card-text">{{ singleStop.description }}</p>
+                                  <p class="card-text">
+                                      {{ singleStop.description }}<br>
+                                      Distance: {{ singleStop.distance }}
+                                    </p>
                                   
                                 </div>
                         </div>
@@ -55,12 +58,19 @@
                 data: {
                     message: 'Hello World from Zach Using Vue.js!',
                     stops: [],
-                    numStops: 10 
+                    numStops: 10,
+                    userLoc: {
+                        long: null,
+                        lat: null
+                    }
                 },
                 mounted: function () {
                     fetch('https://utils.pauliankline.com/stops.json')
                         .then(response => response.json())
-                        .then(myJson => this.stops = myJson);
+                        .then(myJson => this.stops = myJson);                    
+                },
+                created: function () {
+                    navigator.geolocation.getCurrentPosition(this.setUserLoc)
                 },
                 computed: {
                     filteredStops: function () {
@@ -69,6 +79,17 @@
                             groupOfStops.push(this.stops[i]);
                         }
                         return groupOfStops;
+                    }
+                },
+                watch: {
+                    userLoc: function () {
+                        navigator.geolocation.watchPosition(this.setUserLoc);
+                    }
+                },
+                methods: {
+                    setUserLoc: function (locObj) {
+                        this.userLoc.long = locObj.coords.longitude;
+                        this.userLoc.lat = locObj.coords.latitude;
                     }
                 }
             })
